@@ -1,0 +1,6 @@
+@VpnetworkAPI_HostAddress = http://localhost:5133
+
+GET {{VpnetworkAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
