@@ -7,6 +7,7 @@ namespace VpnetworkAPI.DbContex
     {
         public DbSet<User> Users { get; set; }
         public DbSet<GlobalProgramData> GlobalData { get; set; }
+        public DbSet<Analysis> Analyses { get; set; }
         public UserDbContext(DbContextOptions options) : base(options)
         {
 

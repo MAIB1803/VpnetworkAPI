@@ -41,6 +41,7 @@ namespace VpnetworkAPI.Migrations
                     ProgramName = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     PID = table.Column<int>(type: "int", nullable: false),
                     MemoryUsage = table.Column<long>(type: "bigint", nullable: false),
+                    NetworkUsage = table.Column<double>(type: "float", nullable: false),
                     ProgramBadCount = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },

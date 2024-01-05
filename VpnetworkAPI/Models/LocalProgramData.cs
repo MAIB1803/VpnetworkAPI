@@ -12,5 +12,6 @@ namespace VpnetworkAPI.Models
         public string ProgramName { get; set; }
         public double ProgramLocalNetworkThreshold { get; set; }
         public double ProgramLocalMemoryThreshold { get; set; }
+        public bool IsHarmful { get; set; } = false;
     }
 }

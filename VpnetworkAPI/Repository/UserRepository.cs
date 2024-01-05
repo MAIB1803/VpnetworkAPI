@@ -13,7 +13,7 @@ namespace VpnetworkAPI.Repository
         {
             dbContext = db;
         }
-
+         
         public ActionResult<LocalProgramData> CreateOrUpdateLocalProgramData(string userId, [FromBody] LocalProgramData localProgramData)
         {
             if (localProgramData == null)
@@ -243,6 +243,7 @@ namespace VpnetworkAPI.Repository
             {
                 // Program already exists, update data
                 existingProgram.MemoryUsage = programData.MemoryUsage;
+                existingProgram.NetworkUsage = programData.NetworkUsage;
                 existingProgram.ProgramBadCount = programData.ProgramBadCount;
                 dbContext.SaveChanges();
                 return new OkObjectResult("Program data updated.");
@@ -294,6 +295,7 @@ namespace VpnetworkAPI.Repository
                 {
                     // Update existing program data
                     existingProgram.MemoryUsage = programData.MemoryUsage;
+                    existingProgram.NetworkUsage = programData.NetworkUsage;
                     existingProgram.ProgramBadCount += programData.ProgramBadCount;
                     dbContext.SaveChanges();
                 }

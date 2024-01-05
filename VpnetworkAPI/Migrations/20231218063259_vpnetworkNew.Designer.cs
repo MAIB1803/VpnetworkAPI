@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VpnetworkAPI.DbContex;
 
@@ -11,9 +12,11 @@ using VpnetworkAPI.DbContex;
 namespace VpnetworkAPI.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    partial class UserDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231218063259_vpnetworkNew")]
+    partial class vpnetworkNew
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,6 +27,9 @@ namespace VpnetworkAPI.Migrations
 
             modelBuilder.Entity("VpnetworkAPI.Models.Analysis", b =>
                 {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime2");
 
@@ -37,11 +43,7 @@ namespace VpnetworkAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("DateTime");
+                    b.HasKey("UserId");
 
                     b.ToTable("Analyses");
                 });
@@ -50,9 +52,6 @@ namespace VpnetworkAPI.Migrations
                 {
                     b.Property<string>("ProgramName")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("IsHarmful")
-                        .HasColumnType("bit");
 
                     b.Property<double>("ProgramGLobalMemoryThreshold")
                         .HasColumnType("float");
@@ -69,9 +68,6 @@ namespace VpnetworkAPI.Migrations
                 {
                     b.Property<string>("ProgramName")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("IsHarmful")
-                        .HasColumnType("bit");
 
                     b.Property<double>("ProgramLocalMemoryThreshold")
                         .HasColumnType("float");

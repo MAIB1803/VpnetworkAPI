@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VpnetworkAPI.DbContex;
 
@@ -11,9 +12,11 @@ using VpnetworkAPI.DbContex;
 namespace VpnetworkAPI.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    partial class UserDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231218072123_vsnetworkData")]
+    partial class vsnetworkData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,9 +54,6 @@ namespace VpnetworkAPI.Migrations
                     b.Property<string>("ProgramName")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool>("IsHarmful")
-                        .HasColumnType("bit");
-
                     b.Property<double>("ProgramGLobalMemoryThreshold")
                         .HasColumnType("float");
 
@@ -69,9 +69,6 @@ namespace VpnetworkAPI.Migrations
                 {
                     b.Property<string>("ProgramName")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("IsHarmful")
-                        .HasColumnType("bit");
 
                     b.Property<double>("ProgramLocalMemoryThreshold")
                         .HasColumnType("float");
