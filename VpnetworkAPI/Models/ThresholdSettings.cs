@@ -9,10 +9,14 @@ namespace VpnetworkAPI.Models
 
         [ForeignKey("User")]
         public string UserId { get; set; }
-
-        // ForeignKey is not necessary here
         [Key]
+        public Guid ThresholdSettingsDataId { get; set; }
         public string ProgramName { get; set; }
         public string ThresholdSetting { get; set; }
+        public User User { get; set; }
+        public ThresholdSettings()
+        {
+            ThresholdSettingsDataId = Guid.NewGuid(); // Auto-generate GUID for new instances
+        }
     }
 }

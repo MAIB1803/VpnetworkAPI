@@ -187,8 +187,10 @@ namespace BackgroundServiceWorker
                     User newUser = new User
                     {
                         UserId = userId,
-                        Programs = allProgramData,
-                        UserSettings = null
+                        ProgramData = allProgramData,
+                        LocalProgramData = new List<LocalProgramData>(), // Initialize as empty
+                        ThresholdSettings = new List<ThresholdSettings>(), // Initialize as empty
+                        Analyses = analysisData // Use the collected analysis data
                     };
 
                     SendDataToApi(newUser);
@@ -496,18 +498,20 @@ namespace BackgroundServiceWorker
                 {
                     httpClient.BaseAddress = new Uri(apiUrl);
 
-                    string userJson = System.Text.Json.JsonSerializer.Serialize(user); ;
+                    string userJson = JsonConvert.SerializeObject(user);
                     _logger.LogInformation($"Payload sent to API: {userJson}");
+
 
                     HttpResponseMessage postResponse = httpClient.PostAsync("users/", new StringContent(userJson, Encoding.UTF8, "application/json")).Result;
 
-                    if (postResponse.IsSuccessStatusCode)
+                    if (!postResponse.IsSuccessStatusCode)
                     {
-                        _logger.LogInformation($"User program data added or updated successfully for UserId: {user.UserId}");
+                        string responseContent = postResponse.Content.ReadAsStringAsync().Result;
+                        _logger.LogError($"Failed to post user program data. Status Code: {postResponse.StatusCode}, Response: {responseContent}");
                     }
                     else
                     {
-                        _logger.LogError($"Failed to post user program data. Status Code: {postResponse.StatusCode}");
+                        _logger.LogInformation($"User program data added or updated successfully for UserId: {user.UserId}");
                     }
                 }
             }
@@ -516,6 +520,7 @@ namespace BackgroundServiceWorker
                 _logger.LogError($"Error sending data to API: {ex.Message}");
             }
         }
+
 
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)

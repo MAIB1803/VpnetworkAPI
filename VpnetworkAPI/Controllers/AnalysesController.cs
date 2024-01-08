@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿//using Microsoft.ML.Data;
+using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using VpnetworkAPI.DbContex;
+using VpnetworkAPI.DbContex; // Corrected namespace
 using VpnetworkAPI.Models;
 
 namespace VpnetworkAPI.Controllers
@@ -29,7 +27,7 @@ namespace VpnetworkAPI.Controllers
 
         // GET: api/Analyses/user/{userId}
         [HttpGet("user/{userId}")]
-        public async Task<ActionResult<IEnumerable<Analysis>>> GetAnalysesByUserId(string userId)
+        public async Task<ActionResult<IEnumerable<Analysis>>> GetAnalysesByUserId(string userId) // Changed to int assuming UserId is int
         {
             var analyses = await _context.Analyses
                 .Where(a => a.UserId == userId)
@@ -56,11 +54,11 @@ namespace VpnetworkAPI.Controllers
             return BadRequest(ModelState);
         }
 
-        // PUT: api/Analyses/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAnalysis(string id, [FromBody] Analysis analysis)
+        // PUT: api/Analyses/{guid}
+        [HttpPut("{id:guid}")] // Modified to accept a GUID
+        public async Task<IActionResult> PutAnalysis(Guid id, [FromBody] Analysis analysis)
         {
-            if (id != analysis.UserId)
+            if (id != analysis.AnalysisId) // Check against AnalysisId, which is a GUID
             {
                 return BadRequest();
             }
@@ -91,9 +89,9 @@ namespace VpnetworkAPI.Controllers
             return BadRequest(ModelState);
         }
 
-        // DELETE: api/Analyses/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAnalysis(string id)
+        // DELETE: api/Analyses/{guid}
+        [HttpDelete("{id:guid}")] // Modified to accept a GUID
+        public async Task<IActionResult> DeleteAnalysis(Guid id)
         {
             var analysis = await _context.Analyses.FindAsync(id);
             if (analysis == null)
@@ -107,9 +105,9 @@ namespace VpnetworkAPI.Controllers
             return NoContent();
         }
 
-        private bool AnalysisExists(string id)
+        private bool AnalysisExists(Guid id) // Method updated to check by GUID
         {
-            return _context.Analyses.Any(e => e.UserId == id);
+            return _context.Analyses.Any(e => e.AnalysisId == id);
         }
     }
 }

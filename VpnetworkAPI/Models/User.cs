@@ -1,31 +1,24 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace VpnetworkAPI.Models
 {
-
     public class User
     {
         [Key]
-        public string UserId { get; set; }
+        public String UserId { get; set; }
+        public ICollection<ProgramData> ProgramData { get; set; }
 
-        public List<ProgramData> Programs { get; set; }
+        public ICollection<LocalProgramData> LocalProgramData { get; set; }
+        public ICollection<ThresholdSettings> ThresholdSettings { get; set; }
+        public ICollection<Analysis> Analyses { get; set; } // One-to-many relationship
 
-        // Include LocalProgramData and ThresholdSettings directly
-        public Settings? UserSettings { get; set; }
-
-        public class Settings
+        public User()
         {
-            [Key, ForeignKey("User")]
-            public string UserId { get; set; }
-
-
-            public List<LocalProgramData> LocalProgramSettings { get; set; } = new List<LocalProgramData>();
-
-            // Include ThresholdSettings directly
-            public List<ThresholdSettings> ThresholdtypeSettings { get; set; } = new List<ThresholdSettings>();
+            ProgramData = new HashSet<ProgramData>();
+            LocalProgramData = new HashSet<LocalProgramData>();
+            ThresholdSettings = new HashSet<ThresholdSettings>();
+            Analyses = new HashSet<Analysis>();
         }
     }
-
 }
-

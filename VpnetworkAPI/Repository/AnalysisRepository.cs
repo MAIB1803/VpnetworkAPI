@@ -3,69 +3,67 @@ using Sieve.Models;
 using Sieve.Services;
 using System;
 using System.Linq;
-using System.Collections.Generic; // Add this for List<T>
 using VpnetworkAPI.Models;
-using Microsoft.EntityFrameworkCore;
-using VpnetworkAPI.DbContex;
+using VpnetworkAPI.DbContex; // Corrected namespace
 
 namespace VpnetworkAPI.Services
 {
     public class AnalysisRepository : InterfaceAnalysis
     {
         private readonly SieveProcessor _sieveProcessor;
-        public readonly UserDbContext dbContext;
-        public AnalysisRepository(SieveProcessor sieveProcessor , UserDbContext db)
+        public readonly UserDbContext dbContex;
+
+        public AnalysisRepository(SieveProcessor sieveProcessor, UserDbContext db)
         {
-            dbContext = db;
+            dbContex = db;
             _sieveProcessor = sieveProcessor;
-    }
+        }
 
         public IActionResult GetAnalysis(string userId, string programName, DateTime dateTime, long memoryUsage, double NetworkUsage, SieveModel sieveModel)
         {
             try
             {
-                // Your logic to get analysis data
-                var analysisData = GetAnalysisData(userId);
+                var analysisData = dbContex.Analyses
+                    .Where(a => a.UserId == userId)
+                    .AsQueryable();
 
-                // Apply sorting and filtering using Sieve
+                // Apply filtering using Sieve
                 var filteredData = _sieveProcessor.Apply<Analysis>(sieveModel, analysisData)
-                    .Where(a => a.UserId == userId &&
-                                a.ProgramName == programName &&
-                                a.DateTime == dateTime &&
+                    .Where(a => a.ProgramName == programName &&
                                 a.MemoryUsage == memoryUsage &&
                                 a.NetworkUsage == NetworkUsage);
 
                 // Return the result
-                // For example:
                 return new OkObjectResult(filteredData);
             }
             catch (Exception ex)
             {
-                // Handle exceptions appropriately
-                return new StatusCodeResult(500); // Use StatusCodes.Status500InternalServerError if you prefer constants
+                // Log the exception details
+                // Example: _logger.LogError(ex, "An error occurred while retrieving analysis data.");
+                return new StatusCodeResult(500); // Internal Server Error
             }
         }
 
-        private IQueryable<Analysis> GetAnalysisData(string userId)
-        {
-            var analysisData = dbContext.Analyses
-               .Where(a => a.UserId == userId)
-               .AsQueryable(); // Return the data as an IQueryable
-
-            return analysisData;
-        }
-
-        public IActionResult UpdateAnalysis(int UserId, Analysis analysis)
+        public IActionResult UpdateAnalysis(Guid analysisId, Analysis analysis)
         {
             try
             {
+                var existingAnalysis = dbContex.Analyses.Find(analysisId);
+                if (existingAnalysis == null)
+                {
+                    return new NotFoundObjectResult("Analysis not found.");
+                }
+
+                dbContex.SaveChanges();
+
                 return new OkObjectResult("Analysis updated successfully");
             }
             catch (Exception ex)
             {
-                // Handle exceptions appropriately
-                return new StatusCodeResult(500); // Use StatusCodes.Status500InternalServerError if you prefer constants
+               
+                return new StatusCodeResult(500); //
             }
         }
+
     }
 }

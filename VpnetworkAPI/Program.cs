@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using VpnetworkAPI.DbContex;
 using VpnetworkAPI.Repository;
 using BackgroundServiceWorker;
-using ModelTrainingServiceNamespace;
 using VpnetworkAPI.Services;
 using System.Collections.Concurrent;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,7 +27,7 @@ namespace VpnetworkAPI
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<UserDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("vpNetwork")));
-            builder.Services.AddHostedService<ModelTrainingService>();
+            //builder.Services.AddHostedService<ModelTrainingService>();
             builder.Services.AddHostedService<BackgroundServices>();
             var app = builder.Build();
             

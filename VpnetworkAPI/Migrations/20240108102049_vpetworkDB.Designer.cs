@@ -12,8 +12,8 @@ using VpnetworkAPI.DbContex;
 namespace VpnetworkAPI.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20231218071703_vipnetworkData")]
-    partial class vipnetworkData
+    [Migration("20240108102049_vpetworkDB")]
+    partial class vpetworkDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,6 +27,10 @@ namespace VpnetworkAPI.Migrations
 
             modelBuilder.Entity("VpnetworkAPI.Models.Analysis", b =>
                 {
+                    b.Property<Guid>("AnalysisId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime2");
 
@@ -42,7 +46,11 @@ namespace VpnetworkAPI.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("AnalysisId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Analyses");
                 });
@@ -51,6 +59,9 @@ namespace VpnetworkAPI.Migrations
                 {
                     b.Property<string>("ProgramName")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsHarmful")
+                        .HasColumnType("bit");
 
                     b.Property<double>("ProgramGLobalMemoryThreshold")
                         .HasColumnType("float");
@@ -65,8 +76,12 @@ namespace VpnetworkAPI.Migrations
 
             modelBuilder.Entity("VpnetworkAPI.Models.LocalProgramData", b =>
                 {
-                    b.Property<string>("ProgramName")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("LocalProgramDataId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsHarmful")
+                        .HasColumnType("bit");
 
                     b.Property<double>("ProgramLocalMemoryThreshold")
                         .HasColumnType("float");
@@ -74,24 +89,26 @@ namespace VpnetworkAPI.Migrations
                     b.Property<double>("ProgramLocalNetworkThreshold")
                         .HasColumnType("float");
 
-                    b.Property<string>("SettingsUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserId")
+                    b.Property<string>("ProgramName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ProgramName");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasIndex("SettingsUserId");
+                    b.HasKey("LocalProgramDataId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("LocalProgramData");
                 });
 
             modelBuilder.Entity("VpnetworkAPI.Models.ProgramData", b =>
                 {
-                    b.Property<string>("ProgramName")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("ProgramDataId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<long>("MemoryUsage")
                         .HasColumnType("bigint");
@@ -105,23 +122,31 @@ namespace VpnetworkAPI.Migrations
                     b.Property<int>("ProgramBadCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("ProgramName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("ProgramName");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasIndex("UserId");
+                    b.HasKey("ProgramDataId");
+
+                    b.HasIndex("UserId", "ProgramName")
+                        .IsUnique();
 
                     b.ToTable("ProgramData");
                 });
 
             modelBuilder.Entity("VpnetworkAPI.Models.ThresholdSettings", b =>
                 {
-                    b.Property<string>("ProgramName")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("ThresholdSettingsDataId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("SettingsUserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("ProgramName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ThresholdSetting")
                         .IsRequired()
@@ -129,11 +154,11 @@ namespace VpnetworkAPI.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("ProgramName");
+                    b.HasKey("ThresholdSettingsDataId");
 
-                    b.HasIndex("SettingsUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("ThresholdSettings");
                 });
@@ -148,58 +173,59 @@ namespace VpnetworkAPI.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("VpnetworkAPI.Models.User+Settings", b =>
+            modelBuilder.Entity("VpnetworkAPI.Models.Analysis", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.HasOne("VpnetworkAPI.Models.User", "User")
+                        .WithMany("Analyses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasKey("UserId");
-
-                    b.ToTable("Settings");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("VpnetworkAPI.Models.LocalProgramData", b =>
                 {
-                    b.HasOne("VpnetworkAPI.Models.User+Settings", null)
-                        .WithMany("LocalProgramSettings")
-                        .HasForeignKey("SettingsUserId");
+                    b.HasOne("VpnetworkAPI.Models.User", "User")
+                        .WithMany("LocalProgramData")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("VpnetworkAPI.Models.ProgramData", b =>
                 {
-                    b.HasOne("VpnetworkAPI.Models.User", null)
-                        .WithMany("Programs")
-                        .HasForeignKey("UserId");
+                    b.HasOne("VpnetworkAPI.Models.User", "User")
+                        .WithMany("ProgramData")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("VpnetworkAPI.Models.ThresholdSettings", b =>
                 {
-                    b.HasOne("VpnetworkAPI.Models.User+Settings", null)
-                        .WithMany("ThresholdtypeSettings")
-                        .HasForeignKey("SettingsUserId");
-                });
-
-            modelBuilder.Entity("VpnetworkAPI.Models.User+Settings", b =>
-                {
-                    b.HasOne("VpnetworkAPI.Models.User", null)
-                        .WithOne("UserSettings")
-                        .HasForeignKey("VpnetworkAPI.Models.User+Settings", "UserId")
+                    b.HasOne("VpnetworkAPI.Models.User", "User")
+                        .WithMany("ThresholdSettings")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("VpnetworkAPI.Models.User", b =>
                 {
-                    b.Navigation("Programs");
+                    b.Navigation("Analyses");
 
-                    b.Navigation("UserSettings");
-                });
+                    b.Navigation("LocalProgramData");
 
-            modelBuilder.Entity("VpnetworkAPI.Models.User+Settings", b =>
-                {
-                    b.Navigation("LocalProgramSettings");
+                    b.Navigation("ProgramData");
 
-                    b.Navigation("ThresholdtypeSettings");
+                    b.Navigation("ThresholdSettings");
                 });
 #pragma warning restore 612, 618
         }
