@@ -27,8 +27,10 @@ namespace VpnetworkAPI
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<UserDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("vpNetwork")));
-            //builder.Services.AddHostedService<ModelTrainingService>();
-            builder.Services.AddHostedService<BackgroundServices>();
+            //builder.services.addhostedservice<modeltrainingservice>();
+           // builder.Services.AddHostedService<BackgroundServices>();
+            //register automapper
+            builder.Services.AddAutoMapper(typeof(Program));
             var app = builder.Build();
             
 

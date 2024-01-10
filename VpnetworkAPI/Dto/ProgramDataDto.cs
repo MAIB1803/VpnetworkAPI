@@ -1,11 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using VpnetworkAPI.Models;
 
-namespace VpnetworkAPI.Models
+namespace VpnetworkAPI.Dto
 {
-    public class ProgramData
+    public class ProgramDataDto
     {
-        [Key]
         public Guid ProgramDataId { get; set; }
         public string UserId { get; set; }
         public string ProgramName { get; set; }
@@ -13,7 +11,6 @@ namespace VpnetworkAPI.Models
         public double NetworkUsage { get; set; }
         public int ProgramBadCount { get; set; }
 
-        public User User { get; set; }
-
+        
     }
 }

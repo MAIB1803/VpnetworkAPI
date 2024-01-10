@@ -12,8 +12,8 @@ using VpnetworkAPI.DbContex;
 namespace VpnetworkAPI.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20240108102049_vpetworkDB")]
-    partial class vpetworkDB
+    [Migration("20240110092832_vpnetwork")]
+    partial class vpnetwork
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -71,7 +71,7 @@ namespace VpnetworkAPI.Migrations
 
                     b.HasKey("ProgramName");
 
-                    b.ToTable("GlobalData");
+                    b.ToTable("GlobalProgramData");
                 });
 
             modelBuilder.Entity("VpnetworkAPI.Models.LocalProgramData", b =>
@@ -80,7 +80,7 @@ namespace VpnetworkAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsHarmful")
+                    b.Property<bool?>("IsHarmful")
                         .HasColumnType("bit");
 
                     b.Property<double>("ProgramLocalMemoryThreshold")
@@ -116,15 +116,12 @@ namespace VpnetworkAPI.Migrations
                     b.Property<double>("NetworkUsage")
                         .HasColumnType("float");
 
-                    b.Property<int>("PID")
-                        .HasColumnType("int");
-
                     b.Property<int>("ProgramBadCount")
                         .HasColumnType("int");
 
                     b.Property<string>("ProgramName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -132,15 +129,14 @@ namespace VpnetworkAPI.Migrations
 
                     b.HasKey("ProgramDataId");
 
-                    b.HasIndex("UserId", "ProgramName")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("ProgramData");
                 });
 
             modelBuilder.Entity("VpnetworkAPI.Models.ThresholdSettings", b =>
                 {
-                    b.Property<Guid>("ThresholdSettingsDataId")
+                    b.Property<Guid>("ThresholdSettingDataId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -156,7 +152,7 @@ namespace VpnetworkAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("ThresholdSettingsDataId");
+                    b.HasKey("ThresholdSettingDataId");
 
                     b.HasIndex("UserId");
 
@@ -168,6 +164,22 @@ namespace VpnetworkAPI.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PassWord")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("User_Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
@@ -176,7 +188,7 @@ namespace VpnetworkAPI.Migrations
             modelBuilder.Entity("VpnetworkAPI.Models.Analysis", b =>
                 {
                     b.HasOne("VpnetworkAPI.Models.User", "User")
-                        .WithMany("Analyses")
+                        .WithMany("Analysis")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -219,7 +231,7 @@ namespace VpnetworkAPI.Migrations
 
             modelBuilder.Entity("VpnetworkAPI.Models.User", b =>
                 {
-                    b.Navigation("Analyses");
+                    b.Navigation("Analysis");
 
                     b.Navigation("LocalProgramData");
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace VpnetworkAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class vpetworkDB : Migration
+    public partial class a16 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

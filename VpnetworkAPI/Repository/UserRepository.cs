@@ -111,12 +111,6 @@ namespace VpnetworkAPI.Repository
                     return new ConflictObjectResult("User with the same UserId already exists.");
                 }
 
-                // Initialize collections if they are null to prevent null reference exceptions
-                user.ProgramData ??= new List<ProgramData>();
-                user.LocalProgramData ??= new List<LocalProgramData>();
-                user.ThresholdSettings ??= new List<ThresholdSettings>();
-                user.Analyses ??= new List<Analysis>(); // Assuming Analysis is another collection in User
-
                 // Add the new user
                 dbContext.Users.Add(user);
                 dbContext.SaveChanges();
@@ -248,14 +242,14 @@ namespace VpnetworkAPI.Repository
             else
             {
                 // Add new program data
-                user.ProgramData.Add(programData);
+                dbContext.ProgramData.Add(programData);
                 dbContext.SaveChanges();
                 return new OkObjectResult("New program added for the existing user.");
             }
         }
 
 
-        public ActionResult<User> UpdateUser(string userId, [FromBody] User updatedUser)
+        public ActionResult<User> UpdateUser([FromBody] string userId,  User updatedUser)
         {
             var existingUser = dbContext.Users
                 .Include(u => u.ProgramData)

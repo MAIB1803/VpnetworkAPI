@@ -1,5 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
+using VpnetworkAPI.Dto;
 using VpnetworkAPI.Models;
 using VpnetworkAPI.Repository;
 using VpnetworkAPI.Services;
@@ -9,16 +14,30 @@ namespace VpnetworkAPI.Controllers
     public class InsightDataController : Controller
     {
         private readonly InterfaceUser _userRepository;
+        public readonly IMapper _map;
 
-        public InsightDataController(InterfaceUser userRepository)
+        public InsightDataController(InterfaceUser userRepository, IMapper map)
         {
+            _map = map;
             _userRepository = userRepository;
         }
 
         [HttpPost("users")]
-        public ActionResult<User> CreateUser([FromBody] User user)
+        public IActionResult CreateUser([FromBody] UserDto user)
         {
-            return _userRepository.CreateUser(user);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var data = _map.Map<User>(user);
+            
+            var createdUser = _userRepository.CreateUser(data);
+            if (createdUser == null)
+            {
+                return BadRequest("Unable to create user.");
+            }
+            return Ok(new { StatusCode = (int)HttpStatusCode.OK, Message = "Success" });
+            //return CreatedAtAction(nameof(GetUserByUserId), new { userId = createdUser}, createdUser);
         }
 
         [HttpGet("users/{userId}")]
@@ -28,21 +47,49 @@ namespace VpnetworkAPI.Controllers
         }
 
         [HttpGet("users")]
-        public ActionResult<List<User>> GetUsers()
+        public IActionResult GetUsers()
         {
-            return _userRepository.GetUsers();
+            var users = _userRepository.GetUsers();
+            if (users == null)
+            {
+                return NotFound("No users found.");
+            }
+
+            return Ok(users);
         }
 
         [HttpPut("users/{userId}")]
-        public ActionResult<User> UpdateUser(string userId, [FromBody] User user)
+        public IActionResult UpdateUser(string userId, [FromBody] User user)
         {
-            return _userRepository.UpdateUser(userId, user);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var updatedUser = _userRepository.UpdateUser(userId, user);
+            if (updatedUser == null)
+            {
+                return NotFound($"User with ID {userId} not found.");
+            }
+
+            return Ok(updatedUser);
         }
 
         [HttpPut("users/{userId}/programs")]
-        public ActionResult<User> UpdateUserPrograms(string userId, [FromBody] List<ProgramData> programDataList)
+        public IActionResult UpdateUserPrograms(string userId, [FromBody] List<ProgramData> programDataList)
         {
-            return _userRepository.UpdateUserPrograms(userId, programDataList);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = _userRepository.UpdateUserPrograms(userId, programDataList);
+            if (user == null)
+            {
+                return NotFound($"User with ID {userId} not found.");
+            }
+
+            return Ok(user);
         }
 
         [HttpGet("users/{userId}/programs")]
@@ -52,9 +99,10 @@ namespace VpnetworkAPI.Controllers
         }
 
         [HttpPost("users/{userId}/programs")]
-        public ActionResult<ProgramData> PostProgramData(string userId, [FromBody] ProgramData programData)
+        public ActionResult<ProgramData> PostProgramData(string userId, [FromBody] ProgramDataDto programData)
         {
-            return _userRepository.PostProgramData(userId, programData);
+            var data = _map.Map<ProgramData>(programData);
+            return _userRepository.PostProgramData(userId, data);
         }
 
         [HttpPost("users/{userId}/thresholdTypeSettings")]

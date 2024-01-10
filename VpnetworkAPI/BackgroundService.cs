@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Text;
+using VpnetworkAPI.Dto;
 using VpnetworkAPI.Models;
 
 
@@ -11,8 +12,8 @@ namespace BackgroundServiceWorker
         private readonly ILogger<BackgroundServices> _logger;
         private Timer timer;
         private string apiUrl = "https://localhost:7177/";
-        private string userId = "String"; // Replace with dynamic user
-        private List<ProgramData> allProgramData;
+        private string userId = "stfggsjvxgcgfhdring"; // Replace with dynamic user
+        private List<ProgramDataDto> allProgramData;
         private List<Analysis> analysisData;
 
         private const double DefaultLocalMemoryThreshold = 100000; // Replace with your default value
@@ -23,7 +24,7 @@ namespace BackgroundServiceWorker
         public BackgroundServices(ILogger<BackgroundServices> logger)
         {
             _logger = logger;
-            allProgramData = new List<ProgramData>();
+            allProgramData = new List<ProgramDataDto>();
             analysisData = new List<Analysis>();
         }
 
@@ -57,7 +58,7 @@ namespace BackgroundServiceWorker
                         double networkSpeed = GetNetworkSpeed(processName);
 
                         ThresholdSettings thresholdSetting = GetThresholdTypeSettings(userId, processName);
-
+                         
                         if (thresholdSetting != null)
                         {
                             Console.WriteLine("We are at the thresholdSetting");
@@ -105,7 +106,7 @@ namespace BackgroundServiceWorker
 
                         if (memoryUsage > MemoryThreshold || networkSpeed > NetworkThreshold)
                         {
-                            ProgramData existingProgram = allProgramData.Find(p => p.ProgramName == processName);
+                            ProgramDataDto existingProgram = allProgramData.Find(p => p.ProgramName == processName);
                             if (existingProgram != null)
                             {
                                 existingProgram.ProgramBadCount++;
@@ -116,10 +117,10 @@ namespace BackgroundServiceWorker
                             else
                             {
                                 Console.WriteLine($"oiee this is {processName} the new fellow");
-                                ProgramData programData = new ProgramData
+                                ProgramDataDto programData = new ProgramDataDto
                                 {
+                                    ProgramDataId = new Guid(),
                                     ProgramName = processName,
-                                    PID = pid,
                                     MemoryUsage = memoryUsage,
                                     NetworkUsage = networkSpeed,
                                     ProgramBadCount = 1
@@ -153,15 +154,15 @@ namespace BackgroundServiceWorker
 
                 //var existingProgramData = GetProgramDataFromApi(userId);
 
-                List<ProgramData> existingProgramData = GetProgramDataFromApi(userId);
+                List<ProgramDataDto> existingProgramData = GetProgramDataFromApi(userId);
 
                 if (existingProgramData != null)
                 {
                     Console.WriteLine("Hey we are checking existing user here");
 
-                    foreach (ProgramData programData in allProgramData)
+                    foreach (ProgramDataDto programData in allProgramData)
                     {
-                        ProgramData existingProgram = existingProgramData.FirstOrDefault(p => p.ProgramName == programData.ProgramName);
+                        ProgramDataDto existingProgram = existingProgramData.FirstOrDefault(p => p.ProgramName == programData.ProgramName);
 
                         if (existingProgram != null)
                         {
@@ -184,13 +185,11 @@ namespace BackgroundServiceWorker
                 }
                 else
                 {
-                    User newUser = new User
+                    UserDto newUser = new UserDto
                     {
                         UserId = userId,
-                        ProgramData = allProgramData,
-                        LocalProgramData = new List<LocalProgramData>(), // Initialize as empty
-                        ThresholdSettings = new List<ThresholdSettings>(), // Initialize as empty
-                        Analyses = analysisData // Use the collected analysis data
+                        programs = allProgramData
+                        
                     };
 
                     SendDataToApi(newUser);
@@ -208,7 +207,7 @@ namespace BackgroundServiceWorker
         }
 
 
-        private void UpdateProgramDataToApi(string userId, List<ProgramData> programDataList)
+        private void UpdateProgramDataToApi(string userId, List<ProgramDataDto> programDataList)
         {
             try
             {
@@ -275,7 +274,7 @@ namespace BackgroundServiceWorker
             }
         }
 
-        private List<ProgramData> GetProgramDataFromApi(string userId)
+        private List<ProgramDataDto> GetProgramDataFromApi(string userId)
         {
             try
             {
@@ -292,7 +291,7 @@ namespace BackgroundServiceWorker
                         if (!string.IsNullOrEmpty(programDataJson))
                         {
 
-                            List<ProgramData> programDataList = JsonConvert.DeserializeObject<List<ProgramData>>(programDataJson);
+                            List<ProgramDataDto> programDataList = JsonConvert.DeserializeObject<List<ProgramDataDto>>(programDataJson);
                             _logger.LogInformation($"Deserialization successful. Number of items: {programDataList.Count}");
                             return programDataList;
                         }
@@ -303,7 +302,7 @@ namespace BackgroundServiceWorker
             catch (Exception ex)
             {
                 _logger.LogError("Error in getting program data from API: " + ex.Message);
-                return new List<ProgramData>();
+                return new List<ProgramDataDto>();
             }
         }
 
@@ -490,7 +489,7 @@ namespace BackgroundServiceWorker
             }
         }
 
-        private void SendDataToApi(User user)
+        private void SendDataToApi(UserDto user)
         {
             try
             {

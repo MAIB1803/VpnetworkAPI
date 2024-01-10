@@ -33,7 +33,7 @@ namespace VpnetworkAPI.Controllers
                 .Where(a => a.UserId == userId)
                 .ToListAsync();
 
-            if (analyses == null || analyses.Count == 0)
+            if (analyses == null)
             {
                 return NotFound("No analysis data found for the specified user.");
             }
@@ -109,5 +109,7 @@ namespace VpnetworkAPI.Controllers
         {
             return _context.Analyses.Any(e => e.AnalysisId == id);
         }
+
+        
     }
 }
