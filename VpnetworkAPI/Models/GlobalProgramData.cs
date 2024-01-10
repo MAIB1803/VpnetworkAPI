@@ -8,5 +8,6 @@ namespace VpnetworkAPI.Models
         public string ProgramName { get; set; }
         public double ProgramGlobalNetworkThreshold { get; set; }
         public double ProgramGLobalMemoryThreshold { get; set; }
+        public bool IsHarmful { get; set; }
     }
 }

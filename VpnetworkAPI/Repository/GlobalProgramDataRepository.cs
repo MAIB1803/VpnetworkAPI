@@ -26,7 +26,7 @@ namespace VpnetworkAPI.Repository
             if (existingGlobalProgramData == null)
             {
                 // Check if a program with the same name already exists
-                var duplicateProgram = dbContext.GlobalData.FirstOrDefault(p => p.ProgramName == globalProgramData.ProgramName);
+                var duplicateProgram = dbContext.GlobalProgramData.FirstOrDefault(p => p.ProgramName == globalProgramData.ProgramName);
                 if (duplicateProgram != null)
                 {
                     // Program with the same name already exists, return a conflict response
@@ -54,13 +54,13 @@ namespace VpnetworkAPI.Repository
 
         public List<GlobalProgramData> GetGlobalPrograms()
         {
-            var globalPrograms = dbContext.GlobalData.ToList();
+            var globalPrograms = dbContext.GlobalProgramData.ToList();
             return globalPrograms;
         }
 
         public ActionResult<GlobalProgramData> GetGlobalProgramsData(string programName)
         {
-            var globalProgram = dbContext.GlobalData.FirstOrDefault(p => p.ProgramName == programName);
+            var globalProgram = dbContext.GlobalProgramData.FirstOrDefault(p => p.ProgramName == programName);
 
             if (globalProgram == null)
             {

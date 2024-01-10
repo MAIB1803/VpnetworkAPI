@@ -1,31 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿ using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace VpnetworkAPI.Models
 {
-
     public class User
     {
         [Key]
         public string UserId { get; set; }
+        public string User_Name { get; set; }
+        public string PassWord { get; set; }
+        public string Email { get; set; }
+        public string UserImage { get; set; }
 
-        public List<ProgramData> Programs { get; set; }
-
-        // Include LocalProgramData and ThresholdSettings directly
-        public Settings? UserSettings { get; set; }
-
-        public class Settings
-        {
-            [Key, ForeignKey("User")]
-            public string UserId { get; set; }
-
-
-            public List<LocalProgramData> LocalProgramSettings { get; set; } = new List<LocalProgramData>();
-
-            // Include ThresholdSettings directly
-            public List<ThresholdSettings> ThresholdtypeSettings { get; set; } = new List<ThresholdSettings>();
-        }
+        public ICollection<Analysis> Analysis { get; set; }
+        public ICollection<LocalProgramData> LocalProgramData { get; set; }
+        public ICollection<ProgramData> ProgramData { get; set; }
+        public ICollection<ThresholdSettings> ThresholdSettings { get; set; }
     }
-
 }
-

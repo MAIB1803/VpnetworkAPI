@@ -7,7 +7,6 @@ namespace VpnetworkAPI.Services
     {
         List<GlobalProgramData>  GetGlobalPrograms();
         ActionResult<GlobalProgramData> CreateOrUpdateGlobalProgramData([FromBody] GlobalProgramData globalProgramData);
-
         ActionResult<GlobalProgramData> GetGlobalProgramsData(string programName);
     }
 }
