@@ -7,12 +7,12 @@ using VpnetworkAPI.Models;
 
 namespace BackgroundServiceWorker
 {
-    public class BackgroundServices : BackgroundService
+  public class BackgroundServices : BackgroundService
     {
         private readonly ILogger<BackgroundServices> _logger;
         private Timer timer;
         private string apiUrl = "https://localhost:7177/";
-        private string userId = "stfggsjvxgcgfhdring"; // Replace with dynamic user
+        private string userId = "g"; // Replace with dynamic user
         private List<ProgramDataDto> allProgramData;
         private List<Analysis> analysisData;
 
