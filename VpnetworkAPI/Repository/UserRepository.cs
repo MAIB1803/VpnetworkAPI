@@ -189,7 +189,7 @@ namespace VpnetworkAPI.Repository
            .Include(u => u.ThresholdSettings)
            .ToList();
 
-            return new OkObjectResult(users);
+            return users;
         }
 
         public ActionResult<LocalProgramData> GetLocalProgramNameData(string userId, string programName)
