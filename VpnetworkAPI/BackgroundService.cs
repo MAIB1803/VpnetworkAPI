@@ -188,7 +188,7 @@ namespace BackgroundServiceWorker
                     UserDto newUser = new UserDto
                     {
                         UserId = userId,
-                        programs = allProgramData
+                        //programs = allProgramData
                         
                     };
 

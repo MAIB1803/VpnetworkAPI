@@ -8,6 +8,6 @@
         public string Email { get; set; }
         public string UserImage { get; set; }
 
-        public List<ProgramDataDto>? programs { get; set;}
+       // public List<ProgramDataDto>? programs { get; set;}
     }
 }

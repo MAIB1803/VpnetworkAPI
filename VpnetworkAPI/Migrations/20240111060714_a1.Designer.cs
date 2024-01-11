@@ -12,8 +12,8 @@ using VpnetworkAPI.DbContex;
 namespace VpnetworkAPI.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20240110092832_vpnetwork")]
-    partial class vpnetwork
+    [Migration("20240111060714_a1")]
+    partial class a1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
