@@ -1,18 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using VpnetworkAPI.Dto;
 using VpnetworkAPI.Models;
 
 namespace VpnetworkAPI.Services
 {
     public interface InterfaceUser
     {
-        ActionResult<User> GetUserByUserId(string userId);
-        ActionResult <List<User>> GetUsers();
+        ActionResult<UserDto> GetUserByUserId(string userId);
+        ActionResult <List<UserDto>> GetUsers();
 
         ActionResult<User> CreateUser([FromBody] User user);
 
         ActionResult<User> UpdateUser(string userId, User user);
 
-        ActionResult<User> GetProgramsByUserId(string userId);
+        ActionResult<List<ProgramDataDto>> GetProgramsByUserId(string userId);
+
+        ActionResult<ProgramData>  DeleteProgramByUseridOrPName(string userId,string programName);
         ActionResult<User> UpdateUserPrograms(string userId, [FromBody] List<ProgramData> programDataList);
 
         ActionResult<ProgramData> PostProgramData(string userId, [FromBody] ProgramData programData);
