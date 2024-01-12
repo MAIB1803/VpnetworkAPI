@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Text;
+using System.Web.Helpers;
 using VpnetworkAPI.Dto;
 using VpnetworkAPI.Models;
 
@@ -12,7 +13,7 @@ namespace BackgroundServiceWorker
         private readonly ILogger<BackgroundServices> _logger;
         private Timer timer;
         private string apiUrl = "https://localhost:7177/";
-        private string userId = "g"; // Replace with dynamic user
+        private string userId = "utsav12"; // Replace with dynamic user
         private List<ProgramDataDto> allProgramData;
         private List<Analysis> analysisData;
 
@@ -188,6 +189,10 @@ namespace BackgroundServiceWorker
                     UserDto newUser = new UserDto
                     {
                         UserId = userId,
+                        User_Name= "billo",
+                        PassWord="whitedevil",
+                        Email="billo@gmial.com",
+                        UserImage="billo.png"
                         //programs = allProgramData
 
                     };
