@@ -56,10 +56,10 @@ namespace VpnetworkAPI.Controllers
         public IActionResult PostAnalysis(string userId, [FromBody] AnalysesDto analysis)
         {
            
-            _services.PostAnalysis(userId,analysis);
-            if (null!=null)
+            var dataA =_services.PostAnalysis(userId,analysis);
+            if ( dataA !=null)
             {
-                return Ok(new { StatusCode = (int)HttpStatusCode.OK, Message = "Success" });
+                return Ok(new { StatusCode = (int)HttpStatusCode.OK, Message = "Success"});
             }
             else
             {
