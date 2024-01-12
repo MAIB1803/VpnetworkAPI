@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Text;
 using VpnetworkAPI.Dto;
@@ -42,7 +42,7 @@ namespace BackgroundServiceWorker
 
         private async void TimerElapsed(object state)
         {
-            try  
+            try
             {
                 Process[] processes = Process.GetProcesses();
 
@@ -58,7 +58,7 @@ namespace BackgroundServiceWorker
                         double networkSpeed = GetNetworkSpeed(processName);
 
                         ThresholdSettings thresholdSetting = GetThresholdTypeSettings(userId, processName);
-                         
+
                         if (thresholdSetting != null)
                         {
                             Console.WriteLine("We are at the thresholdSetting");
@@ -188,8 +188,8 @@ namespace BackgroundServiceWorker
                     UserDto newUser = new UserDto
                     {
                         UserId = userId,
-                        programs = allProgramData
-                        
+                        //programs = allProgramData
+
                     };
 
                     SendDataToApi(newUser);

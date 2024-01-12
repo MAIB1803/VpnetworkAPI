@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.ML;
 using VpnetworkAPI.DbContex;
+using VpnetworkAPI.Dto;
 using VpnetworkAPI.Models;
 using VpnetworkAPI.Services;
 
@@ -9,8 +12,10 @@ namespace VpnetworkAPI.Repository
     public class UserRepository : InterfaceUser
     {
         private readonly UserDbContext dbContext;
-        public UserRepository(UserDbContext db)
+        public readonly IMapper _map;
+        public UserRepository(UserDbContext db, IMapper map)
         {
+            _map = map;
             dbContext = db;
         }
 
@@ -56,7 +61,7 @@ namespace VpnetworkAPI.Repository
             }
         }
 
-        public ActionResult<ThresholdSettings> CreateOrUpdateThresholdTypeSettings(string userId, [FromBody] ThresholdSettings thresholdSettings)
+        public ActionResult<ThresholdSettings> CreateOrUpdateThresholdTypeSettings(string userId, [FromBody] ThresholdSettingsDto thresholdSettings)
         {
             if (thresholdSettings == null)
             {
@@ -82,7 +87,9 @@ namespace VpnetworkAPI.Repository
                     // Threshold setting with the same name already exists, return a conflict response
                     return new ConflictObjectResult("Threshold setting with the same name already exists.");
                 }
-                user.ThresholdSettings.Add(thresholdSettings);
+                var data = _map.Map<ThresholdSettings>(thresholdSettings);
+                dbContext.ThresholdSettings.Add(data);
+               // user.ThresholdSettings.Add(thresholdSettings);
                 dbContext.SaveChanges();
                 return new OkObjectResult("New threshold setting data added for the existing user.");
             }
@@ -130,17 +137,17 @@ namespace VpnetworkAPI.Repository
             throw new NotImplementedException();
         }
 
-        public ActionResult<User> GetProgramsByUserId(string userId)
+        public ActionResult<List<ProgramDataDto>> GetProgramsByUserId(string userId)
         {
-            var user = dbContext.Users
-             .Include(u => u.ProgramData)
-             .FirstOrDefault(u => u.UserId == userId);
-                    if (user == null)
+            var user = dbContext.ProgramData.ToList().Where(u => u.UserId == userId);
+
+            var data = _map.Map<List<ProgramDataDto>>(user);
+            if (user == null)
             {
                 return new NotFoundObjectResult("User not found");
             }
 
-            return new OkObjectResult(user.ProgramData);
+            return data;
         }
 
         public ActionResult<ThresholdSettings> GetThresholdTypeSettings(string userId, string programName)
@@ -165,7 +172,7 @@ namespace VpnetworkAPI.Repository
             return new OkObjectResult(thresholdSetting);
         }
 
-        public ActionResult<User> GetUserByUserId(string userId)
+        public ActionResult<UserDto> GetUserByUserId(string userId)
         {
             var user = dbContext.Users
             .Include(u => u.ProgramData)
@@ -173,23 +180,25 @@ namespace VpnetworkAPI.Repository
             .Include(u => u.ThresholdSettings)
             .FirstOrDefault(u => u.UserId == userId);
 
+            var data = _map.Map<UserDto>(user);
+
             if (user == null)
             {
                 return new NotFoundObjectResult("User not found");
             }
 
-            return new OkObjectResult(user);
+            return data;
         }
 
-        public ActionResult<List<User>> GetUsers()
+        public ActionResult<List<UserDto>> GetUsers()
         {
             var users = dbContext.Users
            .Include(u => u.ProgramData)
            .Include(u => u.LocalProgramData)
            .Include(u => u.ThresholdSettings)
            .ToList();
-
-            return users;
+            var data = _map.Map<List<UserDto>>(users);
+            return data;
         }
 
         public ActionResult<LocalProgramData> GetLocalProgramNameData(string userId, string programName)
@@ -249,7 +258,7 @@ namespace VpnetworkAPI.Repository
         }
 
 
-        public ActionResult<User> UpdateUser([FromBody] string userId,  User updatedUser)
+        public ActionResult<User> UpdateUser([FromBody] string userId, User updatedUser)
         {
             var existingUser = dbContext.Users
                 .Include(u => u.ProgramData)
@@ -262,8 +271,13 @@ namespace VpnetworkAPI.Repository
                 return new NotFoundObjectResult("User not found");
             }
 
+            // var data = dbContext.Users.Update(updatedUser);
+            dbContext.Entry(existingUser).CurrentValues.SetValues(updatedUser);
+
+
             dbContext.SaveChanges();
-            return new OkObjectResult(existingUser);
+
+            return updatedUser;
         }
 
 
@@ -298,6 +312,14 @@ namespace VpnetworkAPI.Repository
             dbContext.SaveChanges();
             return new OkObjectResult("Program data updated successfully");
         }
-       
+
+        public ActionResult<ProgramData> DeleteProgramByUseridOrPName(string userId, string programName)
+        {
+            var data = dbContext.ProgramData.Where(p => p.UserId==userId && p.ProgramName == programName).Single();
+            dbContext.ProgramData.Remove(data);
+            dbContext.SaveChanges();
+
+            return data;
+        }
     }
 }

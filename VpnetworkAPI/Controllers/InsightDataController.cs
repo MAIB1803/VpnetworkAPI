@@ -41,7 +41,7 @@ namespace VpnetworkAPI.Controllers
         }
 
         [HttpGet("users/{userId}")]
-        public ActionResult<User> GetUserByUserId(string userId)
+        public ActionResult<UserDto> GetUserByUserId(string userId)
         {
             return _userRepository.GetUserByUserId(userId);
         }
@@ -55,24 +55,24 @@ namespace VpnetworkAPI.Controllers
                 return NotFound("No users found.");
             }
 
-            return Ok(users);
+            return Ok(new { StatusCode = (int)HttpStatusCode.OK, Message = "Success" ,data=users.Value });
         }
 
         [HttpPut("users/{userId}")]
-        public IActionResult UpdateUser(string userId, [FromBody] User user)
+        public IActionResult UpdateUser(string userId, [FromBody] UserDto user)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
-            var updatedUser = _userRepository.UpdateUser(userId, user);
+            var data= _map.Map<User>(user);
+            var updatedUser = _userRepository.UpdateUser(userId, data);
             if (updatedUser == null)
             {
                 return NotFound($"User with ID {userId} not found.");
             }
 
-            return Ok(updatedUser);
+            return Ok(new { StatusCode = (int)HttpStatusCode.OK, Message = "Success" ,data= updatedUser.Value});
         }
 
         [HttpPut("users/{userId}/programs")]
@@ -93,9 +93,10 @@ namespace VpnetworkAPI.Controllers
         }
 
         [HttpGet("users/{userId}/programs")]
-        public ActionResult<User> GetProgramsByUserId(string userId)
+        public ActionResult<ProgramDataDto> GetProgramsByUserId(string userId)
         {
-            return _userRepository.GetProgramsByUserId(userId);
+           var data =_userRepository.GetProgramsByUserId(userId);
+            return Ok(data);
         }
 
         [HttpPost("users/{userId}/programs")]
@@ -104,9 +105,15 @@ namespace VpnetworkAPI.Controllers
             var data = _map.Map<ProgramData>(programData);
             return _userRepository.PostProgramData(userId, data);
         }
+        [HttpDelete("User/DeleteProgramByUseridOrPName")]
+        public ActionResult<ProgramData> PostProgramData(string userId,string programName)
+        {
+            var data = _userRepository.DeleteProgramByUseridOrPName(userId, programName);
+            return data;
+        }
 
         [HttpPost("users/{userId}/thresholdTypeSettings")]
-        public ActionResult<ThresholdSettings> CreateOrUpdateThresholdTypeSettings(string userId, [FromBody] ThresholdSettings thresholdSettings)
+        public ActionResult<ThresholdSettings> CreateOrUpdateThresholdTypeSettings(string userId, [FromBody] ThresholdSettingsDto thresholdSettings)
         {
             return _userRepository.CreateOrUpdateThresholdTypeSettings(userId, thresholdSettings);
         }

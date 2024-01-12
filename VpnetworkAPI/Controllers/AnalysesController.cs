@@ -1,9 +1,13 @@
 ﻿//using Microsoft.ML.Data;
 using System;
+using System.Net;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VpnetworkAPI.DbContex; // Corrected namespace
+using VpnetworkAPI.Dto;
 using VpnetworkAPI.Models;
+using VpnetworkAPI.Services;
 
 namespace VpnetworkAPI.Controllers
 {
@@ -12,103 +16,96 @@ namespace VpnetworkAPI.Controllers
     public class AnalysesController : ControllerBase
     {
         private readonly UserDbContext _context;
+        private readonly InterfaceAnalysis _services;
 
-        public AnalysesController(UserDbContext context)
+        public AnalysesController(UserDbContext context, InterfaceAnalysis _serv)
         {
             _context = context;
+            _services = _serv;
         }
 
         // GET: api/Analyses
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Analysis>>> GetAnalyses()
+        [HttpGet("/api/GetAllAnalysisData")]
+        public IActionResult  GetAnalyses()
         {
-            return await _context.Analyses.ToListAsync();
+            var data = _services.GetAnalyses();
+
+            //var data= await _context.Analyses.ToListAsync();
+            return Ok(new { StatusCode = (int)HttpStatusCode.OK, Message = "Success" ,data=data});
         }
 
         // GET: api/Analyses/user/{userId}
-        [HttpGet("user/{userId}")]
-        public async Task<ActionResult<IEnumerable<Analysis>>> GetAnalysesByUserId(string userId) // Changed to int assuming UserId is int
+        [HttpGet("/api/GetAnalysesByUserId")]
+        public IActionResult GetAnalysesByUserId(string userId) // Changed to int assuming UserId is int
         {
-            var analyses = await _context.Analyses
-                .Where(a => a.UserId == userId)
-                .ToListAsync();
-
-            if (analyses == null)
+             var data=_services.GetAnalysesByUserId(userId);
+               
+            if(data!=null)
             {
-                return NotFound("No analysis data found for the specified user.");
+                return Ok(new { StatusCode = (int)HttpStatusCode.OK, Message = "Success", data = data });
             }
-
-            return analyses;
+            else
+            {
+                return BadRequest(new { StatusCode = (int)HttpStatusCode.BadRequest, Message = " Data is not Found according UserId ", data = data });
+            }
+            
         }
 
         // POST: api/Analyses
-        [HttpPost]
-        public async Task<IActionResult> PostAnalysis([FromBody] Analysis analysis)
+        [HttpPost("/api/PostAnalysis")]
+        public IActionResult PostAnalysis(string userId, [FromBody] AnalysesDto analysis)
         {
-            if (ModelState.IsValid)
+           
+            var dataA =_services.PostAnalysis(userId,analysis);
+            if ( dataA !=null)
             {
-                _context.Analyses.Add(analysis);
-                await _context.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetAnalysesByUserId), new { userId = analysis.UserId }, analysis);
+                return Ok(new { StatusCode = (int)HttpStatusCode.OK, Message = "Success"});
             }
-            return BadRequest(ModelState);
+            else
+            {
+                return BadRequest(new { StatusCode = (int)HttpStatusCode.BadRequest, Message = "Who's present userid in User table and Who's present userid in Analysis table did not match.." });
+            }
+            
+
         }
 
         // PUT: api/Analyses/{guid}
         [HttpPut("{id:guid}")] // Modified to accept a GUID
-        public async Task<IActionResult> PutAnalysis(Guid id, [FromBody] Analysis analysis)
+        public async Task<IActionResult> PutAnalysis(Guid id, [FromBody] AnalysisUserDto analysis)
         {
-            if (id != analysis.AnalysisId) // Check against AnalysisId, which is a GUID
+            var updatedAnalysis = _services.PutAnalysis(id, analysis);
+
+            if (updatedAnalysis == null)
             {
-                return BadRequest();
+                return NotFound(); // Assuming you want to return NotFound if the item is not found
             }
 
-            if (ModelState.IsValid)
-            {
-                _context.Entry(analysis).State = EntityState.Modified;
-
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AnalysisExists(id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                return NoContent();
-            }
-
-            return BadRequest(ModelState);
+            return Ok(new { StatusCode = (int)HttpStatusCode.OK, Message = "Success" ,data= updatedAnalysis });
         }
 
         // DELETE: api/Analyses/{guid}
         [HttpDelete("{id:guid}")] // Modified to accept a GUID
         public async Task<IActionResult> DeleteAnalysis(Guid id)
         {
-            var analysis = await _context.Analyses.FindAsync(id);
-            if (analysis == null)
+
+
+            var updatedAnalysis = _services.DeleteAnalysis(id);
+
+            if (updatedAnalysis == null)
             {
-                return NotFound();
+                return BadRequest(new { StatusCode = (int)HttpStatusCode.BadRequest, Message = "Data is not deleted"});
             }
+            else
+            {
+                return Ok(new { StatusCode = (int)HttpStatusCode.OK, Message = "Success", data = updatedAnalysis });
 
-            _context.Analyses.Remove(analysis);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            }
         }
 
-        private bool AnalysisExists(Guid id) // Method updated to check by GUID
-        {
-            return _context.Analyses.Any(e => e.AnalysisId == id);
-        }
+        //private bool AnalysisExists(Guid id) // Method updated to check by GUID
+        //{
+        //    return _context.Analyses.Any(e => e.AnalysisId == id);
+        //}
 
         
     }

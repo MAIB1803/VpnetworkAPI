@@ -12,7 +12,7 @@ using VpnetworkAPI.DbContex;
 namespace VpnetworkAPI.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20240110125204_a1")]
+    [Migration("20240111060714_a1")]
     partial class a1
     {
         /// <inheritdoc />

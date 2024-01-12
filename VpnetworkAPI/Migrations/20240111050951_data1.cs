@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace VpnetworkAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class a16 : Migration
+    public partial class data1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "GlobalData",
+                name: "GlobalProgramData",
                 columns: table => new
                 {
                     ProgramName = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -22,14 +22,18 @@ namespace VpnetworkAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GlobalData", x => x.ProgramName);
+                    table.PrimaryKey("PK_GlobalProgramData", x => x.ProgramName);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    User_Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PassWord = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserImage = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,7 +71,7 @@ namespace VpnetworkAPI.Migrations
                     ProgramName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProgramLocalNetworkThreshold = table.Column<double>(type: "float", nullable: false),
                     ProgramLocalMemoryThreshold = table.Column<double>(type: "float", nullable: false),
-                    IsHarmful = table.Column<bool>(type: "bit", nullable: false)
+                    IsHarmful = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -85,9 +89,8 @@ namespace VpnetworkAPI.Migrations
                 columns: table => new
                 {
                     ProgramDataId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProgramName = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PID = table.Column<int>(type: "int", nullable: false),
+                    ProgramName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MemoryUsage = table.Column<long>(type: "bigint", nullable: false),
                     NetworkUsage = table.Column<double>(type: "float", nullable: false),
                     ProgramBadCount = table.Column<int>(type: "int", nullable: false)
@@ -107,14 +110,14 @@ namespace VpnetworkAPI.Migrations
                 name: "ThresholdSettings",
                 columns: table => new
                 {
-                    ThresholdSettingsDataId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ThresholdSettingDataId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProgramName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ThresholdSetting = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ThresholdSettings", x => x.ThresholdSettingsDataId);
+                    table.PrimaryKey("PK_ThresholdSettings", x => x.ThresholdSettingDataId);
                     table.ForeignKey(
                         name: "FK_ThresholdSettings_Users_UserId",
                         column: x => x.UserId,
@@ -134,10 +137,9 @@ namespace VpnetworkAPI.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProgramData_UserId_ProgramName",
+                name: "IX_ProgramData_UserId",
                 table: "ProgramData",
-                columns: new[] { "UserId", "ProgramName" },
-                unique: true);
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ThresholdSettings_UserId",
@@ -152,7 +154,7 @@ namespace VpnetworkAPI.Migrations
                 name: "Analyses");
 
             migrationBuilder.DropTable(
-                name: "GlobalData");
+                name: "GlobalProgramData");
 
             migrationBuilder.DropTable(
                 name: "LocalProgramData");
