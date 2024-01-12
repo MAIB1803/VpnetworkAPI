@@ -2,12 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using VpnetworkAPI.DbContex;
 using VpnetworkAPI.Repository;
-using BackgroundServiceWorker;
+//using BackgroundServiceWorker;
 using VpnetworkAPI.Services;
 using System.Collections.Concurrent;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using VpnetworkAPI.Models;
+using Sieve.Services;
 
 namespace VpnetworkAPI
 {
@@ -22,9 +23,17 @@ namespace VpnetworkAPI
             builder.Services.AddControllers();
             builder.Services.AddScoped<InterfaceGlobalProgramData, GlobalProgramDataRepository>();
             builder.Services.AddScoped<InterfaceUser, UserRepository>();
+            //Add Services and Repository
+
+            builder.Services.AddScoped<InterfaceAnalysis, AnalysisRepository>();
+
+            builder.Services.AddScoped<SieveProcessor>();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+
             builder.Services.AddDbContext<UserDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("vpNetwork")));
             //builder.services.addhostedservice<modeltrainingservice>();
