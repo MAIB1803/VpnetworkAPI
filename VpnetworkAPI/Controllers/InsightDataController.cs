@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
-using VpnetworkAPI.Dto;
 using VpnetworkAPI.Models;
 using VpnetworkAPI.Repository;
 using VpnetworkAPI.Services;
+using VpnetworkAPI.Dto;
 
 namespace VpnetworkAPI.Controllers
 {
@@ -119,25 +119,27 @@ namespace VpnetworkAPI.Controllers
         }
 
         [HttpGet("users/{userId}/thresholdTypeSettings/{programName}")]
-        public ActionResult<ThresholdSettings> GetThresholdTypeSettings(string userId, string programName)
+        public ActionResult<ThresholdSettingsDto> GetThresholdTypeSettings(string userId, string programName)
         {
-            return _userRepository.GetThresholdTypeSettings(userId, programName);
+             var data = _userRepository.GetThresholdTypeSettings(userId, programName);
+            return Ok(new { StatusCode = (int)HttpStatusCode.OK, Message = "Success", data = data.Value });
+
         }
 
         [HttpPost("users/{userId}/localProgramData")]
-        public ActionResult<LocalProgramData> CreateOrUpdateLocalProgramData(string userId, [FromBody] LocalProgramData localProgramData)
+        public ActionResult<LocalProgramData> CreateOrUpdateLocalProgramData(string userId, [FromBody] LocalProgramDataDto localProgramData)
         {
             return _userRepository.CreateOrUpdateLocalProgramData(userId, localProgramData);
         }
 
         [HttpGet("users/{userId}/localProgramData/{programName}")]
-        public ActionResult<LocalProgramData> GetLocalProgramNameData(string userId, string programName)
+        public ActionResult<LocalProgramDataDto> GetLocalProgramNameData(string userId, string programName)
         {
             return _userRepository.GetLocalProgramNameData(userId, programName);
         }
 
         [HttpGet("users/{userId}/localProgramData")]
-        public ActionResult<List<LocalProgramData>> GetLocalProgramData(string userId)
+        public ActionResult<List<LocalProgramDataDto>> GetLocalProgramData(string userId)
         {
             return _userRepository.GetLocalProgramData(userId);
         }
