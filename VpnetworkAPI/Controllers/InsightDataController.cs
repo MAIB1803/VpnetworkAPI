@@ -113,7 +113,7 @@ namespace VpnetworkAPI.Controllers
         }
 
         [HttpPost("users/{userId}/thresholdTypeSettings")]
-        public ActionResult<ThresholdSettings> CreateOrUpdateThresholdTypeSettings(string userId, [FromBody] ThresholdSettings thresholdSettings)
+        public ActionResult<ThresholdSettings> CreateOrUpdateThresholdTypeSettings(string userId, [FromBody] ThresholdSettingsDto thresholdSettings)
         {
             return _userRepository.CreateOrUpdateThresholdTypeSettings(userId, thresholdSettings);
         }

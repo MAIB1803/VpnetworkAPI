@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.ML;
 using VpnetworkAPI.DbContex;
 using VpnetworkAPI.Dto;
 using VpnetworkAPI.Models;
@@ -60,7 +61,7 @@ namespace VpnetworkAPI.Repository
             }
         }
 
-        public ActionResult<ThresholdSettings> CreateOrUpdateThresholdTypeSettings(string userId, [FromBody] ThresholdSettings thresholdSettings)
+        public ActionResult<ThresholdSettings> CreateOrUpdateThresholdTypeSettings(string userId, [FromBody] ThresholdSettingsDto thresholdSettings)
         {
             if (thresholdSettings == null)
             {
@@ -86,7 +87,9 @@ namespace VpnetworkAPI.Repository
                     // Threshold setting with the same name already exists, return a conflict response
                     return new ConflictObjectResult("Threshold setting with the same name already exists.");
                 }
-                user.ThresholdSettings.Add(thresholdSettings);
+                var data = _map.Map<ThresholdSettings>(thresholdSettings);
+                dbContext.ThresholdSettings.Add(data);
+               // user.ThresholdSettings.Add(thresholdSettings);
                 dbContext.SaveChanges();
                 return new OkObjectResult("New threshold setting data added for the existing user.");
             }

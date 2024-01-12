@@ -11,6 +11,7 @@ namespace VpnetworkAPI.Mapper
         {
             CreateMap<User,UserDto>().ReverseMap();
             CreateMap<ProgramData, ProgramDataDto>().ReverseMap();
+            CreateMap<ThresholdSettings, ThresholdSettingsDto>().ReverseMap();
         }
     }
 }

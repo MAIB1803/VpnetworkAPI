@@ -27,7 +27,7 @@ namespace VpnetworkAPI.Services
         ActionResult<LocalProgramData> CreateOrUpdateLocalProgramData(string userId, [FromBody] LocalProgramData localProgramData);
 
         ActionResult<ThresholdSettings> GetThresholdTypeSettings(string userId, string programName);
-        ActionResult<ThresholdSettings> CreateOrUpdateThresholdTypeSettings(string userId, [FromBody] ThresholdSettings thresholdSettings);
+        ActionResult<ThresholdSettings> CreateOrUpdateThresholdTypeSettings(string userId, [FromBody] ThresholdSettingsDto thresholdSettings);
 
 
     }
