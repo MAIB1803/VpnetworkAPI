@@ -16,18 +16,18 @@ namespace VpnetworkAPI.Services
         ActionResult<List<ProgramDataDto>> GetProgramsByUserId(string userId);
 
         ActionResult<ProgramData>  DeleteProgramByUseridOrPName(string userId,string programName);
-        ActionResult<User> UpdateUserPrograms(string userId, [FromBody] List<ProgramData> programDataList);
+        ActionResult<User> UpdateUserPrograms(string userId,  List<ProgramData> programDataList);
 
-        ActionResult<ProgramData> PostProgramData(string userId, [FromBody] ProgramData programData);
+        ActionResult<ProgramData> PostProgramData(string userId, ProgramData programData);
 
-        ActionResult<List<LocalProgramData>> GetLocalProgramData(string userId);
+        ActionResult<List<LocalProgramDataDto>> GetLocalProgramData(string userId);
 
-        ActionResult<LocalProgramData> GetLocalProgramNameData(string userId, string programName);
+        ActionResult<LocalProgramDataDto> GetLocalProgramNameData(string userId, string programName);
 
-        ActionResult<LocalProgramData> CreateOrUpdateLocalProgramData(string userId, [FromBody] LocalProgramData localProgramData);
+        ActionResult<LocalProgramData> CreateOrUpdateLocalProgramData(string userId, LocalProgramDataDto localProgramData);
 
-        ActionResult<ThresholdSettings> GetThresholdTypeSettings(string userId, string programName);
-        ActionResult<ThresholdSettings> CreateOrUpdateThresholdTypeSettings(string userId, [FromBody] ThresholdSettingsDto thresholdSettings);
+        ActionResult<ThresholdSettingsDto> GetThresholdTypeSettings(string userId, string programName);
+        ActionResult<ThresholdSettings> CreateOrUpdateThresholdTypeSettings(string userId, ThresholdSettingsDto thresholdSettings);
 
 
     }

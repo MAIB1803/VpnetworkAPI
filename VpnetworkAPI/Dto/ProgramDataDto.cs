@@ -11,6 +11,6 @@ namespace VpnetworkAPI.Dto
         public double NetworkUsage { get; set; }
         public int ProgramBadCount { get; set; }
 
-        
+
     }
 }

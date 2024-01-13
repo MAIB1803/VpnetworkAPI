@@ -12,7 +12,7 @@ namespace BackgroundServiceWorker
         private readonly ILogger<BackgroundServices> _logger;
         private Timer timer;
         private string apiUrl = "https://localhost:7177/";
-        private string userId = "g"; // Replace with dynamic user
+        private string userId = "stfggsjvxgcgfhdring"; // Replace with dynamic user
         private List<ProgramDataDto> allProgramData;
         private List<Analysis> analysisData;
 
