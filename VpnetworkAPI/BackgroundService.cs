@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Text;
+using System.Web.Helpers;
 using VpnetworkAPI.Dto;
 using VpnetworkAPI.Models;
 
@@ -18,8 +19,6 @@ namespace BackgroundServiceWorker
 
         private const double DefaultLocalMemoryThreshold = 100000; // Replace with your default value
         private const double DefaultLocalNetworkThreshold = 10000; // Replace with your default value
-
-        // Define memory and network speed threshold
 
         public BackgroundServices(ILogger<BackgroundServices> logger)
         {
@@ -188,6 +187,10 @@ namespace BackgroundServiceWorker
                     UserDto newUser = new UserDto
                     {
                         UserId = userId,
+                        User_Name= "billo",
+                        PassWord="whitedevil",
+                        Email="billo@gmial.com",
+                        UserImage="billo.png"
                         //programs = allProgramData
 
                     };
@@ -405,7 +408,8 @@ namespace BackgroundServiceWorker
                     }
                     return null;
                 }
-            }
+            }         
+
             catch (Exception ex)
             {
                 _logger.LogError($"Error in getting local threshold settings: {ex.Message}");

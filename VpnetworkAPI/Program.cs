@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using VpnetworkAPI.Models;
 using Sieve.Services;
+using BackgroundServiceWorker;
 
 namespace VpnetworkAPI
 {
@@ -37,8 +38,10 @@ namespace VpnetworkAPI
             builder.Services.AddDbContext<UserDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("vpNetwork")));
             //builder.services.addhostedservice<modeltrainingservice>();
-           // builder.Services.AddHostedService<BackgroundServices>();
+            builder.Services.AddHostedService<BackgroundServices>();
             //register automapper
+            
+            
             builder.Services.AddAutoMapper(typeof(Program));
             var app = builder.Build();
             

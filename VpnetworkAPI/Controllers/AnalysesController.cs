@@ -70,26 +70,26 @@ namespace VpnetworkAPI.Controllers
         }
 
         // PUT: api/Analyses/{guid}
-        [HttpPut("{id:guid}")] // Modified to accept a GUID
-        public async Task<IActionResult> PutAnalysis(Guid id, [FromBody] AnalysisUserDto analysis)
+        [HttpPut("/api/PutAnalysisByAnalysisId")] // Modified to accept a GUID
+        public async Task<IActionResult> PutAnalysis(Guid AnalysisId, [FromBody] AnalysisUserDto analysis)
         {
-            var updatedAnalysis = _services.PutAnalysis(id, analysis);
+            var updatedAnalysis = _services.PutAnalysis(AnalysisId, analysis);
 
             if (updatedAnalysis == null)
             {
                 return NotFound(); // Assuming you want to return NotFound if the item is not found
             }
 
-            return Ok(new { StatusCode = (int)HttpStatusCode.OK, Message = "Success" ,data= updatedAnalysis });
+            return Ok(new { StatusCode = (int)HttpStatusCode.OK, Message = "Data Updated Successfully.." ,data= updatedAnalysis });
         }
 
         // DELETE: api/Analyses/{guid}
-        [HttpDelete("{id:guid}")] // Modified to accept a GUID
-        public async Task<IActionResult> DeleteAnalysis(Guid id)
+        [HttpDelete("/api/DeleteAnalysisByAnalysisId")] // Modified to accept a GUID
+        public async Task<IActionResult> DeleteAnalysis(Guid AnalysisId)
         {
 
 
-            var updatedAnalysis = _services.DeleteAnalysis(id);
+            var updatedAnalysis = _services.DeleteAnalysis(AnalysisId);
 
             if (updatedAnalysis == null)
             {
@@ -97,7 +97,7 @@ namespace VpnetworkAPI.Controllers
             }
             else
             {
-                return Ok(new { StatusCode = (int)HttpStatusCode.OK, Message = "Success", data = updatedAnalysis });
+                return Ok(new { StatusCode = (int)HttpStatusCode.OK, Message = "Data Deleted Successfully.." });
 
             }
         }
