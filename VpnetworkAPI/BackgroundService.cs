@@ -410,7 +410,8 @@ namespace BackgroundServiceWorker
                     }
                     return null;
                 }
-            }
+            }         
+
             catch (Exception ex)
             {
                 _logger.LogError($"Error in getting local threshold settings: {ex.Message}");
