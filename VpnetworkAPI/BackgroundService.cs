@@ -13,14 +13,12 @@ namespace BackgroundServiceWorker
         private readonly ILogger<BackgroundServices> _logger;
         private Timer timer;
         private string apiUrl = "https://localhost:7177/";
-        private string userId = "utsav12"; // Replace with dynamic user
+        private string userId = "stfggsjvxgcgfhdring"; // Replace with dynamic user
         private List<ProgramDataDto> allProgramData;
         private List<Analysis> analysisData;
 
         private const double DefaultLocalMemoryThreshold = 100000; // Replace with your default value
         private const double DefaultLocalNetworkThreshold = 10000; // Replace with your default value
-
-        // Define memory and network speed threshold
 
         public BackgroundServices(ILogger<BackgroundServices> logger)
         {

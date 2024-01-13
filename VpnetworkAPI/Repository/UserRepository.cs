@@ -19,7 +19,7 @@ namespace VpnetworkAPI.Repository
             dbContext = db;
         }
 
-        public ActionResult<LocalProgramData> CreateOrUpdateLocalProgramData(string userId, [FromBody] LocalProgramData localProgramData)
+        public ActionResult<LocalProgramData> CreateOrUpdateLocalProgramData(string userId, LocalProgramDataDto localProgramData)
         {
             if (localProgramData == null)
             {
@@ -47,7 +47,9 @@ namespace VpnetworkAPI.Repository
                 }
 
                 // Add the new local program data
-                user.LocalProgramData.Add(localProgramData);
+                var data = _map.Map<LocalProgramData>(localProgramData);
+
+                user.LocalProgramData.Add(data);
                 dbContext.SaveChanges();
                 return new OkObjectResult("New local program data added for the existing user.");
             }
@@ -132,9 +134,12 @@ namespace VpnetworkAPI.Repository
         }
 
 
-        public ActionResult<List<LocalProgramData>> GetLocalProgramData(string userId)
+        public ActionResult<List<LocalProgramDataDto>> GetLocalProgramData(string userId)
         {
-            throw new NotImplementedException();
+            var data= dbContext.LocalProgramData.Where(p=> p.UserId == userId).ToList();
+            var mapData = _map.Map<List<LocalProgramDataDto>>(data);
+            return mapData;
+            
         }
 
         public ActionResult<List<ProgramDataDto>> GetProgramsByUserId(string userId)
@@ -150,7 +155,7 @@ namespace VpnetworkAPI.Repository
             return data;
         }
 
-        public ActionResult<ThresholdSettings> GetThresholdTypeSettings(string userId, string programName)
+        public ActionResult<ThresholdSettingsDto> GetThresholdTypeSettings(string userId, string programName)
         {
             var user = dbContext.Users
             .Include(u => u.ThresholdSettings)
@@ -161,15 +166,15 @@ namespace VpnetworkAPI.Repository
                 return new NotFoundObjectResult("User not found");
             }
 
-            var thresholdSetting = user.ThresholdSettings
+            var thresholdSetting = dbContext.ThresholdSettings
                 .FirstOrDefault(t => t.ProgramName == programName);
 
             if (thresholdSetting == null)
             {
                 return new NotFoundObjectResult($"Threshold setting not found for program: {programName}");
             }
-
-            return new OkObjectResult(thresholdSetting);
+            var data = _map.Map<ThresholdSettingsDto>(thresholdSetting);
+            return data;
         }
 
         public ActionResult<UserDto> GetUserByUserId(string userId)
@@ -201,7 +206,7 @@ namespace VpnetworkAPI.Repository
             return data;
         }
 
-        public ActionResult<LocalProgramData> GetLocalProgramNameData(string userId, string programName)
+        public ActionResult<LocalProgramDataDto> GetLocalProgramNameData(string userId, string programName)
         {
             var user = dbContext.Users
                 .Include(u => u.LocalProgramData)
@@ -217,8 +222,9 @@ namespace VpnetworkAPI.Repository
             {
                 return new NotFoundObjectResult($"Local program with name {programName} not found for user {userId}");
             }
+            var data = _map.Map<LocalProgramDataDto>(localProgram);
 
-            return new OkObjectResult(localProgram);
+            return data;
         }
 
 
@@ -321,5 +327,7 @@ namespace VpnetworkAPI.Repository
 
             return data;
         }
+
+       
     }
 }
